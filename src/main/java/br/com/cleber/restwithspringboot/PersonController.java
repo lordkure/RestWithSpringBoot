@@ -17,7 +17,7 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @PostMapping
+    @PostMapping(consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
     public ResponseEntity<PersonVO> create(@RequestBody PersonVO personVO) {
         if (personVO.getId() != null) {
             throw new IncorrectParamsException("Incorrect params {ID} sent.");
@@ -25,17 +25,17 @@ public class PersonController {
         return new ResponseEntity<>(personService.create(personVO), HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping(consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
     public ResponseEntity<PersonVO> update(@RequestBody PersonVO personVO) {
         return new ResponseEntity<>(personService.update(personVO), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {"application/json", "application/xml"})
     public ResponseEntity<PersonVO> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(personService.findById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/findAll")
+    @GetMapping(value = "/findAll", produces = {"application/json", "application/xml"})
     public ResponseEntity<List<PersonVO>> findAll() {
         return new ResponseEntity<>(personService.findAll(), HttpStatus.OK);
     }
