@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PersonVO implements Serializable {
+public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 
     @EqualsAndHashCode.Include
     private Long id;

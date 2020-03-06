@@ -1,5 +1,7 @@
 package br.com.cleber.restwithspringboot;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import br.com.cleber.restwithspringboot.data.vo.PersonVO;
 import br.com.cleber.restwithspringboot.exception.IncorrectParamsException;
 import br.com.cleber.restwithspringboot.services.PersonService;
@@ -22,22 +24,41 @@ public class PersonController {
         if (personVO.getId() != null) {
             throw new IncorrectParamsException("Incorrect params {ID} sent.");
         }
-        return new ResponseEntity<>(personService.create(personVO), HttpStatus.OK);
+        PersonVO vo = personService.create(personVO);
+        vo.add(linkTo(methodOn(PersonController.class).create(vo)).withSelfRel().withType("POST"));
+        vo.add(linkTo(methodOn(PersonController.class).findById(vo.getId())).withRel("get_person").withType("GET"));
+        vo.add(linkTo(methodOn(PersonController.class).update(vo)).withRel("edit_person").withType("PUT"));
+        vo.add(linkTo(methodOn(PersonController.class).delete(vo.getId())).withRel("delete_person").withType("DELETE"));
+        return new ResponseEntity<>(vo, HttpStatus.OK);
     }
 
     @PutMapping(consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
     public ResponseEntity<PersonVO> update(@RequestBody PersonVO personVO) {
-        return new ResponseEntity<>(personService.update(personVO), HttpStatus.OK);
+        PersonVO vo = personService.update(personVO);
+        vo.add(linkTo(methodOn(PersonController.class).update(vo)).withSelfRel().withType("PUT"));
+        vo.add(linkTo(methodOn(PersonController.class).findById(vo.getId())).withRel("get_person").withType("GET"));
+        vo.add(linkTo(methodOn(PersonController.class).delete(vo.getId())).withRel("delete_person").withType("DELETE"));
+        return new ResponseEntity<>(vo, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}", produces = {"application/json", "application/xml"})
     public ResponseEntity<PersonVO> findById(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(personService.findById(id), HttpStatus.OK);
+        PersonVO personVO = personService.findById(id);
+        personVO.add(linkTo(methodOn(PersonController.class).findById(personVO.getId())).withSelfRel().withType("GET"));
+        personVO.add(linkTo(methodOn(PersonController.class).delete(personVO.getId())).withRel("delete_person").withType("DELETE"));
+        return new ResponseEntity<>(personVO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/findAll", produces = {"application/json", "application/xml"})
     public ResponseEntity<List<PersonVO>> findAll() {
-        return new ResponseEntity<>(personService.findAll(), HttpStatus.OK);
+        List<PersonVO> personVOS = personService.findAll();
+        personVOS
+                .stream()
+                .forEach(personVO -> {
+                    personVO.add(linkTo(methodOn(PersonController.class).findById(personVO.getId())).withSelfRel().withType("GET"));
+                    personVO.add(linkTo(methodOn(PersonController.class).delete(personVO.getId())).withRel("delete_person").withType("DELETE"));
+                });
+        return new ResponseEntity<>(personVOS, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
