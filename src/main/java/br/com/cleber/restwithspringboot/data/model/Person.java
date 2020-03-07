@@ -1,10 +1,12 @@
 package br.com.cleber.restwithspringboot.data.model;
 
 import lombok.*;
+import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Primary
 @Getter
 @Setter
 @NoArgsConstructor
