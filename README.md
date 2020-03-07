@@ -1,6 +1,6 @@
 # RestWithSpringBoot
 <p><b>API para estudos.</b>
-<p>Recursos que serão utilizados ao final da coificação:
+<p>Recursos que serão utilizados ao final da codificação:
 <p>- HATEOAS
 <p>- Migrations
 <p>- Content Negociation
